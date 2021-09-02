@@ -26,7 +26,7 @@ object NotificationUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Test Notifications"
             val descriptionText = "These are some friendly test notifications"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
@@ -38,16 +38,13 @@ object NotificationUtils {
     }
 
     fun showNotification(context: Context) {
-        val soundUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.btn_star)
             .setContentTitle("AlarmManagerPractice")
             .setContentText("Party time -> " + getFormattedTime())
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-//            .setSound(soundUri)
-            .setDefaults(Notification.DEFAULT_SOUND)
+//            .setDefaults(Notification.DEFAULT_SOUND)
 
         with(NotificationManagerCompat.from(context)) {
             // notificationId is a unique int for each notification that you must define
