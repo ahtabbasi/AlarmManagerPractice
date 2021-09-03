@@ -23,7 +23,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     companion object {
         private const val SHOW_NOTIFICATION_ACTION = "SHOW_NOTIFICATION_ACTION"
-        private const val ALARM_INTERVAL_MS = 1 * 60 * 1000
+        private const val ALARM_INTERVAL_MS = 15 * 60 * 1000
 
 
         fun launchAlarm(context: Context, immediate: Boolean) {
