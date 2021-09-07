@@ -1,25 +1,36 @@
 package com.ahtabbasi.alarmmanagerpractice
 
 import android.app.AlarmManager
+import android.app.AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
-import android.os.SystemClock
 import java.util.*
 
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        // Is triggered when alarm goes off, i.e. receiving a system broadcast
-        if (intent.action == SHOW_NOTIFICATION_ACTION) {
-            NotificationUtils.createNotificationChannel(context)
-            NotificationUtils.showNotification(context)
 
-            launchAlarm(context, false)
+        when (intent.action) {
+
+            // Is triggered when alarm goes off, i.e. receiving a system broadcast
+            SHOW_NOTIFICATION_ACTION -> {
+                NotificationUtils.createNotificationChannel(context)
+                NotificationUtils.showNotification(context)
+
+                launchAlarm(context, false)
+            }
+
+            // is triggered when alarm permission is required
+            ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED -> {
+                val needToStartAnyAlarm = true //TODO: Have some actual state checking here
+                if (needToStartAnyAlarm) {
+                    launchAlarm(context, true)
+                }
+            }
         }
     }
 
