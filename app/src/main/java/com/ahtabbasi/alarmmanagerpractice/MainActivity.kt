@@ -1,11 +1,7 @@
 package com.ahtabbasi.alarmmanagerpractice
 
-import android.app.AlertDialog
-import android.content.Intent
-import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
-import android.provider.Settings
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -19,30 +15,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 
-    private fun makeSureBatteryOptimizationIsIgnored() {
-        val intent = Intent()
-        val packageName = packageName
-        val pm = getSystemService(POWER_SERVICE) as PowerManager
-        if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-            showOptimizationRationale {
-                intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                intent.data = Uri.parse("package:$packageName")
-                startActivity(intent)
-            }
-        }
-    }
-
-    private fun showOptimizationRationale(positiveAction: () -> Unit) {
-        AlertDialog.Builder(this)
-            .setMessage("This app needs you to disable battery optimization to continue.")
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                positiveAction()
-            }.show()
-    }
-
     override fun onResume() {
         super.onResume()
-        makeSureBatteryOptimizationIsIgnored()
         refreshStatus(null)
     }
 
@@ -63,6 +37,5 @@ class MainActivity : AppCompatActivity() {
         val launched = AlarmReceiver.isAlreadyLaunched(this)
         tvAlarmStatus.text = if (launched) "Alarm is currently active" else "No active alarm"
     }
-
 
 }

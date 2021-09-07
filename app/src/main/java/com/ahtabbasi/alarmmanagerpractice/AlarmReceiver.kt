@@ -7,7 +7,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.SystemClock
+import java.util.*
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -23,7 +25,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     companion object {
         private const val SHOW_NOTIFICATION_ACTION = "SHOW_NOTIFICATION_ACTION"
-        private const val ALARM_INTERVAL_MS = 15 * 60 * 1000
+        private const val ALARM_INTERVAL_MS = 15 * 60 * 1000L
 
 
         fun launchAlarm(context: Context, immediate: Boolean) {
@@ -32,15 +34,22 @@ class AlarmReceiver : BroadcastReceiver() {
             val alarmIntent = Intent(context, AlarmReceiver::class.java).let { intent ->
                 intent.action = SHOW_NOTIFICATION_ACTION
                 PendingIntent.getBroadcast(
-                    context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT
+                    context,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
             }
 
             val triggerAfterMillis = if (immediate) 0 else ALARM_INTERVAL_MS
+            val currentTime = Calendar.getInstance().time.time
 
-            alarmManager?.setExactAndAllowWhileIdle(
-                AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + triggerAfterMillis,
+            val alarmClockInfo = AlarmManager.AlarmClockInfo(
+                currentTime + triggerAfterMillis,
+                alarmIntent
+            )
+            alarmManager?.setAlarmClock(
+                alarmClockInfo,
                 alarmIntent
             )
 
@@ -55,7 +64,10 @@ class AlarmReceiver : BroadcastReceiver() {
             alarmIntent.action = SHOW_NOTIFICATION_ACTION
 
             return PendingIntent.getBroadcast(
-                context, 0, alarmIntent, PendingIntent.FLAG_NO_CREATE
+                context,
+                0,
+                alarmIntent,
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
             ) != null
         }
 
@@ -71,7 +83,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 context,
                 0,
                 alarmIntent,
-                PendingIntent.FLAG_NO_CREATE
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
             )
 
             if (pendingIntent != null && alarmManager != null) {
